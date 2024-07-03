@@ -7,7 +7,7 @@ chunk_size=50  # Number of files to commit at once
 local_directory="/home/mattson/Documents/GOVT"
 repo_url="https://github.com/ChattMenard/Canadian-Law"
 api_url="https://api.github.com/repos/ChattMenard/Canadian-Law/contents"
-auth_token="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"  # Replace with your GitHub token
+auth_token="${GITHUB_TOKEN}"  # Load the token from an environment variable
 
 # Ensure Git LFS is tracking PDF files
 git lfs track "*.pdf"
@@ -68,7 +68,7 @@ commit_in_chunks() {
   done <<< "$files_to_upload"
 
   # Commit any remaining files
-  if [ $((i % chunk_size)) -ne 0 ]; then
+  if [ $((i % chunk_size)) -ne 0]; then
     echo -ne "\nCommitting final chunk of $((i % chunk_size)) files...\n"
     git commit -m "Final partial commit"
     git push "$remote" "$branch"
