@@ -5,19 +5,13 @@ remote=origin
 branch=master
 chunk_size=50  # Number of files to commit at once
 local_directory="/home/mattson/Documents/GOVT"
-repo_url="https://github.com/ChattMenard/Canadian-Law"
-api_url="https://api.github.com/repos/ChattMenard/Canadian-Law/contents"
-auth_token="${GITHUB_TOKEN}"  # Load the token from an environment variable
+repo_url="https://github.com/ChattMenard/Numero-Uno"
+api_url="https://api.github.com/repos/ChattMenard/Numero-Uno/contents"
 
 # Ensure Git LFS is tracking PDF files
 git lfs track "*.pdf"
 git add .gitattributes
 git commit -m "Track PDF files with Git LFS"
-git push "$remote" "$branch"
-
-# Initial commit for the script and log file
-git add upload_pdfs.sh splitlawpdfs/process_log.log
-git commit -m "Add upload script and process log"
 git push "$remote" "$branch"
 
 # Exclude script and log file from future commits
@@ -30,7 +24,7 @@ git push "$remote" "$branch"
 # Function to get the list of files from GitHub
 get_github_files() {
   echo "Fetching file list from GitHub..."
-  curl -s -H "Authorization: token $auth_token" "$api_url" | jq -r '.[].name'
+  curl -s "$api_url" | jq -r '.[].name'
 }
 
 # Function to get the list of local PDF files
@@ -68,7 +62,7 @@ commit_in_chunks() {
   done <<< "$files_to_upload"
 
   # Commit any remaining files
-  if [ $((i % chunk_size)) -ne 0]; then
+  if [ $((i % chunk_size)) -ne 0 ]; then
     echo -ne "\nCommitting final chunk of $((i % chunk_size)) files...\n"
     git commit -m "Final partial commit"
     git push "$remote" "$branch"
